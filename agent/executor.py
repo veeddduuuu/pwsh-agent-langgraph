@@ -14,13 +14,13 @@ class ExecutionResult:
 def _resolve_shell(command: str) -> list[str]:
     system = platform.system()
     if system == "Windows":
-        if shutil.which("pwsd"): 
+        if shutil.which("pwsh"): 
             return ["pwsh", "-NoProfile", "-Command", command]
         if shutil.which("powershell"):
             return ["powershell", "-NoProfile", "-Command", command]
         return ["cmd", "/c", command]
 
-    pwsh = shutil.which("pwsh"):
+    pwsh = shutil.which("pwsh")
     if pwsh:
         return ["pwsh", "-NoProfile", "-Command", command]
     raise RuntimeError("Powershell not found")
@@ -30,7 +30,7 @@ def run_command(command : str, timeout : int = 60) -> ExecutionResult:
 
     try:
         completed = subprocess.run(
-            argv=arg,
+            arg,
             capture_output=True,
             text=True,
             timeout=timeout,
