@@ -1,7 +1,7 @@
 from langgraph.graph import END, StateGraph
 from .nodes import generate_command_node, execute_command_node, blocked_node, route_after_safety, screen_command_node
 from .state import AgentState
-from langgraph.checkpoint.memory import END, MemorySaver
+from langgraph.checkpoint.memory import MemorySaver
 import uuid
 
 def build_graph():
@@ -15,13 +15,12 @@ def build_graph():
     workflow.set_entry_point("generate_command")
 
     workflow.add_edge("generate_command", "screen_command")
-    workflow.add_edge("screen_command", "execute_command")
     workflow.add_conditional_edges(
         "screen_command",
         route_after_safety,
         {
             "execute":"execute_command",
-            "block":"exit_codeblocked",
+            "block":"blocked",
         }
     )
     workflow.add_edge("execute_command", END)
@@ -29,7 +28,7 @@ def build_graph():
 
     return workflow.compile(
         checkpointer=MemorySaver(),
-        interupt_before=["execute_command"],
+        interrupt_before=["execute_command"],
     )
 
 def thread_config():
