@@ -20,7 +20,7 @@ def build_graph():
         route_after_safety,
         {
             "execute":"execute_command",
-            "block":"blocked",
+            "blocked":"blocked",
         }
     )
     workflow.add_edge("execute_command", END)
